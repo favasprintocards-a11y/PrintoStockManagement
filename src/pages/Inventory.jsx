@@ -390,14 +390,14 @@ const Inventory = () => {
                             Stock: <strong>{selectedProduct?.name}</strong>
                         </p>
                         
-                        <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid var(--border)', borderRadius: '8px' }}>
-                            <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.9rem' }}>
+                        <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid var(--border)', borderRadius: '8px' }} className="history-table-container">
+                            <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.9rem', minWidth: '450px' }}>
                                 <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 1 }}>
                                     <tr>
                                         <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Date</th>
                                         <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Type</th>
                                         <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Qty</th>
-                                        <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Source / Party</th>
+                                        <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Source/Party</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -407,19 +407,10 @@ const Inventory = () => {
                                             .map((t, index) => (
                                                 <tr key={index}>
                                                     <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                            {new Date(t.date).toLocaleDateString()}
-                                                        </div>
+                                                        {new Date(t.date).toLocaleDateString()}
                                                     </td>
                                                     <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-                                                        <span style={{ 
-                                                            padding: '2px 8px', 
-                                                            borderRadius: '4px', 
-                                                            fontSize: '0.75rem', 
-                                                            fontWeight: 'bold',
-                                                            background: t.type === 'IN' ? 'rgba(203, 219, 58, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                                                            color: t.type === 'IN' ? 'var(--secondary)' : '#ef4444'
-                                                        }}>
+                                                        <span className={`badge ${t.type === 'IN' ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '0.7rem' }}>
                                                             {t.type === 'IN' ? 'ADDED' : 'MINUS'}
                                                         </span>
                                                     </td>
@@ -427,9 +418,7 @@ const Inventory = () => {
                                                         {t.type === 'IN' ? '+' : '-'}{t.quantity}
                                                     </td>
                                                     <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                            {t.party}
-                                                        </div>
+                                                        {t.party}
                                                     </td>
                                                 </tr>
                                             ))
@@ -443,6 +432,7 @@ const Inventory = () => {
                                 </tbody>
                             </table>
                         </div>
+
                         
                         <div className="modal-actions" style={{ marginTop: '24px' }}>
                             <button type="button" className="btn-primary" style={{ flex: 1 }} onClick={() => setShowHistoryModal(false)}>Close History</button>
