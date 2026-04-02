@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus, X, Loader2, Pencil, Trash2, History, Calendar, User } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/products';
+// Ensure the base URL is correct for both local and production environments
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api/products`;
 
 const Inventory = () => {
     const [products, setProducts] = useState([]);
