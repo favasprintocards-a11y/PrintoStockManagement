@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Package, X } from 'lucide-react';
+import { Package, X, LayoutDashboard } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     return (
@@ -28,6 +28,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
 
             <nav className="nav-links">
+                <NavLink
+                    to="/"
+                    className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => {
+                        if (window.innerWidth <= 768) {
+                            toggleSidebar();
+                        }
+                    }}
+                >
+                    <LayoutDashboard size={20} />
+                    <span className="label">Dashboard</span>
+                </NavLink>
                 <NavLink
                     to="/inventory"
                     className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}

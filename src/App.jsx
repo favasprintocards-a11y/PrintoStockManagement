@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import Sidebar from './components/Sidebar';
+import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import './App.css';
 
@@ -32,7 +33,7 @@ const App = () => {
 
                 <div className="main-wrapper">
                     <Routes>
-                        <Route path="/" element={<Navigate to="/inventory" />} />
+                        <Route path="/" element={<Dashboard />} />
                         <Route path="/inventory" element={<Inventory />} />
                     </Routes>
                 </div>

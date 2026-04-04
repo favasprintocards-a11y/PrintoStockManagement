@@ -1,23 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Minus, X, Loader2, Pencil, Trash2, History, Calendar, User } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { Plus, Minus, X, Loader2, Pencil, Trash2, History, Calendar, User, ArrowLeft } from 'lucide-react';
 
 // Ensure the base URL is correct for both local and production environments
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const API_URL = `${API_BASE_URL}/api/products`;
 
 const Inventory = () => {
+    const location = useLocation();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const initialParty = location.state?.selectedParty || '';
     const [showAddModal, setShowAddModal] = useState(false); // To create new item
     const [showEditModal, setShowEditModal] = useState(false);
     const [showMinusModal, setShowMinusModal] = useState(false);
     const [showPlusModal, setShowPlusModal] = useState(false); // To add to existing stock
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [productHistory, setProductHistory] = useState([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
 
     // Form states
     const [formData, setFormData] = useState({ name: '', quantity: '' });
-    const [transactionData, setTransactionData] = useState({ quantity: '', party: '' });
+    const [transactionData, setTransactionData] = useState({ quantity: '', party: initialParty });
 
     useEffect(() => {
         fetchProducts();
@@ -115,7 +120,7 @@ const Inventory = () => {
             if (res.ok) {
                 setShowPlusModal(false);
                 setShowMinusModal(false);
-                setTransactionData({ quantity: '', party: '' });
+                setTransactionData({ quantity: '', party: initialParty });
                 fetchProducts();
             } else {
                 const errorData = await res.json();
@@ -126,10 +131,31 @@ const Inventory = () => {
         }
     };
 
+    const fetchHistory = async (productId) => {
+        try {
+            setLoadingHistory(true);
+            const res = await fetch(`${API_URL}/${productId}/history`);
+            const data = await res.json();
+            setProductHistory(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('Error fetching history:', error);
+            setProductHistory([]);
+        } finally {
+            setLoadingHistory(false);
+        }
+    };
+
     return (
         <main className="main-content">
             <header className="top-bar">
-                <h1 className="page-title">Stock Management</h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <h1 className="page-title">Stock Management</h1>
+                    {initialParty && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--secondary)', fontSize: '0.9rem', fontWeight: 600 }}>
+                            <User size={16} /> Viewing for Party: {initialParty}
+                        </div>
+                    )}
+                </div>
                 <div className="top-bar-actions">
                     <button className="btn-primary" onClick={() => { setFormData({ name: '', quantity: '' }); setShowAddModal(true); }} style={{ background: 'var(--secondary)', borderColor: 'var(--secondary)' }}>
                         <Plus size={18} /> New Stock Entry
@@ -165,7 +191,7 @@ const Inventory = () => {
                                                 style={{ background: 'var(--secondary)', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}
                                                 onClick={() => {
                                                     setSelectedProduct(item);
-                                                    setTransactionData({ quantity: '', party: '' });
+                                                    setTransactionData({ quantity: '', party: initialParty });
                                                     setShowPlusModal(true);
                                                 }}
                                             >
@@ -176,7 +202,7 @@ const Inventory = () => {
                                                 style={{ background: '#ef4444', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}
                                                 onClick={() => {
                                                     setSelectedProduct(item);
-                                                    setTransactionData({ quantity: '', party: '' });
+                                                    setTransactionData({ quantity: '', party: initialParty });
                                                     setShowMinusModal(true);
                                                 }}
                                             >
@@ -192,7 +218,9 @@ const Inventory = () => {
                                                 onClick={() => {
                                                     setSelectedProduct(item);
                                                     setShowHistoryModal(true);
+                                                    fetchHistory(item._id);
                                                 }}
+
                                             >
                                                 <History size={16} />
                                             </button>
@@ -391,47 +419,55 @@ const Inventory = () => {
                         </p>
                         
                         <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid var(--border)', borderRadius: '8px' }} className="history-table-container">
-                            <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.9rem', minWidth: '450px' }}>
-                                <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 1 }}>
-                                    <tr>
-                                        <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Date</th>
-                                        <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Type</th>
-                                        <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Qty</th>
-                                        <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Source/Party</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {selectedProduct?.transactions?.length > 0 ? (
-                                        [...selectedProduct.transactions]
-                                            .reverse()
-                                            .map((t, index) => (
-                                                <tr key={index}>
-                                                    <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-                                                        {new Date(t.date).toLocaleDateString()}
-                                                    </td>
-                                                    <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-                                                        <span className={`badge ${t.type === 'IN' ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '0.7rem' }}>
-                                                            {t.type === 'IN' ? 'ADDED' : 'MINUS'}
-                                                        </span>
-                                                    </td>
-                                                    <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', fontWeight: 600, color: t.type === 'IN' ? 'var(--secondary)' : '#ef4444' }}>
-                                                        {t.type === 'IN' ? '+' : '-'}{t.quantity}
-                                                    </td>
-                                                    <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-                                                        {t.party}
-                                                    </td>
-                                                </tr>
-                                            ))
-                                    ) : (
+                            {loadingHistory ? (
+                                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                                    <Loader2 className="animate-spin" style={{ margin: '0 auto 10px' }} />
+                                    Loading history...
+                                </div>
+                            ) : (
+                                <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.9rem', minWidth: '450px' }}>
+                                    <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 1 }}>
                                         <tr>
-                                            <td colSpan="4" style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>
-                                                No activity history found.
-                                            </td>
+                                            <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Date</th>
+                                            <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Type</th>
+                                            <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Qty</th>
+                                            <th style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>Source/Party</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {productHistory.length > 0 ? (
+                                            [...productHistory]
+                                                .reverse()
+                                                .map((t, index) => (
+                                                    <tr key={index}>
+                                                        <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
+                                                            {new Date(t.date).toLocaleDateString()}
+                                                        </td>
+                                                        <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
+                                                            <span className={`badge ${t.type === 'IN' ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '0.7rem' }}>
+                                                                {t.type === 'IN' ? 'ADDED' : 'MINUS'}
+                                                            </span>
+                                                        </td>
+                                                        <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', fontWeight: 600, color: t.type === 'IN' ? 'var(--secondary)' : '#ef4444' }}>
+                                                            {t.type === 'IN' ? '+' : '-'}{t.quantity}
+                                                        </td>
+                                                        <td style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
+                                                            {t.party}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="4" style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>
+                                                    No activity history found.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
+
 
                         
                         <div className="modal-actions" style={{ marginTop: '24px' }}>

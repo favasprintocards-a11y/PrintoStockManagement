@@ -249,6 +249,49 @@ td {
   }
 }
 
+/* Dashboard Cards */
+.stats-header {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.party-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.party-card:hover {
+  border-color: var(--secondary) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn-danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background-color: #fee2e2 !important;
+  transform: scale(1.05);
+}
+
+@media (max-width: 640px) {
+  .stats-header {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 480px) {
   .page-title {
     font-size: 1.1rem;
