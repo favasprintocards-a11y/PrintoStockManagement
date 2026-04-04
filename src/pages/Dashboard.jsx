@@ -80,8 +80,8 @@ const Dashboard = () => {
             </header>
 
             <div className="content-wrapper">
-                <div className="stats-header" style={{ marginBottom: '2rem', display: 'flex', gap: '20px' }}>
-                    <div className="stat-card" style={{ flex: 1, background: '#fff', padding: '20px', borderRadius: '12px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+                <div className="stats-header" style={{ marginBottom: '2rem', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                    <div className="stat-card" style={{ flex: '1 1 200px', background: '#fff', padding: '20px', borderRadius: '12px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--secondary)' }}>
                             <Users size={24} />
                             <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Registered Parties</span>
@@ -90,15 +90,15 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <h2 style={{ fontSize: '1.2rem', marginBottom: '1.2rem', color: 'var(--text-main)' }}>Click on Party Name to see their Stock</h2>
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1.2rem', color: 'var(--text-main)', opacity: 0.8 }}>Tap a party name to view their current stock</h2>
                 
                 {loading ? (
                     <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
                         <Loader2 className="animate-spin" style={{ margin: '0 auto 10px' }} />
-                        Loading Parties...
+                        Loading...
                     </div>
                 ) : parties.length > 0 ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
                         {parties.map((party) => (
                             <div 
                                 key={party._id} 

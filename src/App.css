@@ -188,6 +188,9 @@ td {
 @media (max-width: 768px) {
   .mobile-header {
     display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
   }
 
   .sidebar {
@@ -196,19 +199,16 @@ td {
     left: 0;
     bottom: 0;
     transform: translateX(-100%);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
   }
 
   .sidebar.open {
     transform: translateX(0);
   }
 
-  .sidebar-mobile-close {
-    display: flex;
-    justify-content: flex-end;
-  }
-
   .main-content {
-    padding: 1.25rem;
+    padding: 1rem;
+    padding-bottom: 30px;
   }
 
   .top-bar {
@@ -221,31 +221,32 @@ td {
     font-size: 1.25rem;
   }
 
-  .top-bar-actions {
-    width: 100%;
-  }
-
   .top-bar-actions button {
     width: 100%;
     justify-content: center;
   }
+}
 
-  th, td {
-    padding: 12px 16px;
+/* Mobile Card View Hidden by Default */
+.mobile-cards-list {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .content-wrapper table {
+    display: none;
+  }
+  
+  .content-wrapper {
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
-  .modal {
-    padding: 20px;
-    width: 95%;
-    margin: 10px;
-  }
-
-  .modal-actions {
-    flex-direction: column-reverse;
-  }
-
-  .modal-actions button {
-    width: 100%;
+  .mobile-cards-list {
+    display: flex;
   }
 }
 

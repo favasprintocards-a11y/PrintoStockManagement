@@ -171,90 +171,138 @@ const Inventory = () => {
                         Loading...
                     </div>
                 ) : (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Stock Name</th>
-                                <th>{initialParty ? `${initialParty}'s Balanced Stock` : 'Total Quantity in Warehouse'}</th>
-                                <th style={{ textAlign: 'right' }}>Update Stock</th>
-                                <th style={{ textAlign: 'right' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.length > 0 ? products.map((item) => (
-                                <tr key={item._id}>
-                                    <td style={{ fontWeight: 600 }}>{item.name}</td>
-                                    <td style={{ fontWeight: 600, fontSize: '1.2rem' }}>
-                                        {initialParty ? item.partyBalance : item.quantity}
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                            <button 
-                                                className="btn-primary" 
-                                                style={{ background: 'var(--secondary)', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}
-                                                onClick={() => {
-                                                    setSelectedProduct(item);
-                                                    setTransactionData({ quantity: '', party: initialParty });
-                                                    setShowPlusModal(true);
-                                                }}
-                                            >
-                                                <Plus size={14} /> Add
-                                            </button>
-                                            <button 
-                                                className="btn-primary" 
-                                                style={{ background: '#ef4444', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}
-                                                onClick={() => {
-                                                    setSelectedProduct(item);
-                                                    setTransactionData({ quantity: '', party: initialParty });
-                                                    setShowMinusModal(true);
-                                                }}
-                                            >
-                                                <Minus size={14} /> Minus
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                            <button 
-                                                style={{ background: '#f1f5f9', color: '#475569', padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
-                                                title="View History"
-                                                onClick={() => {
-                                                    setSelectedProduct(item);
-                                                    setShowHistoryModal(true);
-                                                    fetchHistory(item._id);
-                                                }}
+                    <>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Stock Name</th>
+                                    <th>{initialParty ? `${initialParty}'s Balanced Stock` : 'Total Quantity in Warehouse'}</th>
+                                    <th style={{ textAlign: 'right' }}>Update Stock</th>
+                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map((item) => (
+                                    <tr key={item._id}>
+                                        <td style={{ fontWeight: 600 }}>{item.name}</td>
+                                        <td style={{ fontWeight: 600, fontSize: '1.2rem' }}>
+                                            {initialParty ? item.partyBalance : item.quantity}
+                                        </td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                <button 
+                                                    className="btn-primary" 
+                                                    style={{ background: 'var(--secondary)', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}
+                                                    onClick={() => {
+                                                        setSelectedProduct(item);
+                                                        setTransactionData({ quantity: '', party: initialParty });
+                                                        setShowPlusModal(true);
+                                                    }}
+                                                >
+                                                    <Plus size={14} /> Add
+                                                </button>
+                                                <button 
+                                                    className="btn-primary" 
+                                                    style={{ background: '#ef4444', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem' }}
+                                                    onClick={() => {
+                                                        setSelectedProduct(item);
+                                                        setTransactionData({ quantity: '', party: initialParty });
+                                                        setShowMinusModal(true);
+                                                    }}
+                                                >
+                                                    <Minus size={14} /> Minus
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                <button 
+                                                    style={{ background: '#f1f5f9', color: '#475569', padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
+                                                    title="View History"
+                                                    onClick={() => {
+                                                        setSelectedProduct(item);
+                                                        setShowHistoryModal(true);
+                                                        fetchHistory(item._id);
+                                                    }}
 
-                                            >
-                                                <History size={16} />
-                                            </button>
+                                                >
+                                                    <History size={16} />
+                                                </button>
+                                                <button 
+                                                    style={{ background: '#f1f5f9', color: 'var(--primary)', padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
+                                                    onClick={() => {
+                                                        setSelectedProduct(item);
+                                                        setFormData({ name: item.name, quantity: item.quantity });
+                                                        setShowEditModal(true);
+                                                    }}
+                                                >
+                                                    <Pencil size={16} />
+                                                </button>
+                                                <button 
+                                                    style={{ background: '#fef2f2', color: '#ef4444', padding: '6px', borderRadius: '6px', border: '1px solid #fee2e2' }}
+                                                    onClick={() => handleDeleteProduct(item._id)}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        {/* Mobile Card List */}
+                        <div className="mobile-cards-list">
+                            {products.map((item) => (
+                                <div key={item._id} className="mobile-card" style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid var(--border)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                        <span style={{ fontWeight: 700, fontSize: '1rem' }}>{item.name}</span>
+                                        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>
+                                            {initialParty ? item.partyBalance : item.quantity}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                                        <button 
+                                            className="btn-primary" 
+                                            style={{ flex: 1, background: 'var(--secondary)', fontSize: '0.8rem', padding: '10px' }}
+                                            onClick={() => { setSelectedProduct(item); setTransactionData({ quantity: '', party: initialParty }); setShowPlusModal(true); }}
+                                        >
+                                            <Plus size={14} /> Add
+                                        </button>
+                                        <button 
+                                            className="btn-primary" 
+                                            style={{ flex: 1, background: '#ef4444', fontSize: '0.8rem', padding: '10px' }}
+                                            onClick={() => { setSelectedProduct(item); setTransactionData({ quantity: '', party: initialParty }); setShowMinusModal(true); }}
+                                        >
+                                            <Minus size={14} /> Minus
+                                        </button>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+                                        <button 
+                                            onClick={() => { setSelectedProduct(item); setShowHistoryModal(true); fetchHistory(item._id); }}
+                                            style={{ background: '#f1f5f9', padding: '8px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem' }}
+                                        >
+                                            <History size={14} /> History
+                                        </button>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
                                             <button 
-                                                style={{ background: '#f1f5f9', color: 'var(--primary)', padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
-                                                onClick={() => {
-                                                    setSelectedProduct(item);
-                                                    setFormData({ name: item.name, quantity: item.quantity });
-                                                    setShowEditModal(true);
-                                                }}
+                                                onClick={() => { setSelectedProduct(item); setFormData({ name: item.name, quantity: item.quantity }); setShowEditModal(true); }}
+                                                style={{ background: '#f1f5f9', color: 'var(--primary)', padding: '8px', borderRadius: '6px' }}
                                             >
                                                 <Pencil size={16} />
                                             </button>
                                             <button 
-                                                style={{ background: '#fef2f2', color: '#ef4444', padding: '6px', borderRadius: '6px', border: '1px solid #fee2e2' }}
                                                 onClick={() => handleDeleteProduct(item._id)}
+                                                style={{ background: '#fef2f2', color: '#ef4444', padding: '8px', borderRadius: '6px' }}
                                             >
                                                 <Trash2 size={16} />
                                             </button>
                                         </div>
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                                        No items. Click "New Stock Entry" to start.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 )}
             </div>
 
