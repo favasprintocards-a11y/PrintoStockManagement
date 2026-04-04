@@ -31,7 +31,8 @@ const Inventory = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const res = await fetch(API_URL);
+            const queryParam = initialParty ? `?party=${encodeURIComponent(initialParty)}` : '';
+            const res = await fetch(`${API_URL}${queryParam}`);
             const data = await res.json();
             setProducts(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -103,8 +104,8 @@ const Inventory = () => {
     const handleUpdateStock = async (e, type) => {
         e.preventDefault();
         
-        // For 'IN' (Add), we provide a default party name as requested
-        const partyName = type === 'IN' ? 'Stock Added' : transactionData.party;
+        // Use initialParty if no party name provided
+        const partyName = transactionData.party || 'Stock Added';
 
         try {
             const res = await fetch(`${API_URL}/update-stock`, {
@@ -174,7 +175,7 @@ const Inventory = () => {
                         <thead>
                             <tr>
                                 <th>Stock Name</th>
-                                <th>Current Quantity</th>
+                                <th>{initialParty ? `${initialParty}'s Balanced Stock` : 'Total Quantity in Warehouse'}</th>
                                 <th style={{ textAlign: 'right' }}>Update Stock</th>
                                 <th style={{ textAlign: 'right' }}>Actions</th>
                             </tr>
@@ -183,7 +184,9 @@ const Inventory = () => {
                             {products.length > 0 ? products.map((item) => (
                                 <tr key={item._id}>
                                     <td style={{ fontWeight: 600 }}>{item.name}</td>
-                                    <td style={{ fontWeight: 600, fontSize: '1.2rem' }}>{item.quantity}</td>
+                                    <td style={{ fontWeight: 600, fontSize: '1.2rem' }}>
+                                        {initialParty ? item.partyBalance : item.quantity}
+                                    </td>
                                     <td style={{ textAlign: 'right' }}>
                                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                                             <button 
@@ -338,9 +341,14 @@ const Inventory = () => {
                 <div className="modal-overlay">
                     <div className="modal">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                            <h2 style={{ fontSize: '1.25rem', color: 'var(--secondary)' }}>Add Stock</h2>
+                            <h2 style={{ fontSize: '1.25rem', color: 'var(--secondary)' }}>
+                                {initialParty ? `Return from ${initialParty}` : 'Add Stock'}
+                            </h2>
                             <button onClick={() => setShowPlusModal(false)} style={{ background: 'transparent' }}><X size={20} /></button>
                         </div>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
+                            Adding to: <strong>{selectedProduct?.name}</strong>
+                        </p>
                         <form onSubmit={(e) => handleUpdateStock(e, 'IN')}>
                             <div className="form-group">
                                 <label>Quantity to ADD</label>
@@ -351,6 +359,17 @@ const Inventory = () => {
                                     min="1"
                                     value={transactionData.quantity}
                                     onChange={(e) => setTransactionData({...transactionData, quantity: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>From Which Party?</label>
+                                <input 
+                                    type="text" 
+                                    className="form-input" 
+                                    required 
+                                    placeholder="Enter Party Name / Source"
+                                    value={transactionData.party}
+                                    onChange={(e) => setTransactionData({...transactionData, party: e.target.value})}
                                 />
                             </div>
                             <div className="modal-actions">

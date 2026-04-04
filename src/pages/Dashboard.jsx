@@ -9,7 +9,7 @@ const Dashboard = () => {
     const [parties, setParties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
+    const [formData, setFormData] = useState({ name: '' });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,7 +39,7 @@ const Dashboard = () => {
             });
             if (res.ok) {
                 setShowAddModal(false);
-                setFormData({ name: '', phone: '', address: '' });
+                setFormData({ name: '' });
                 fetchParties();
             } else {
                 const errorData = await res.json();
@@ -73,8 +73,8 @@ const Dashboard = () => {
             <header className="top-bar">
                 <h1 className="page-title">Dashboard</h1>
                 <div className="top-bar-actions">
-                    <button className="btn-primary" onClick={() => { setFormData({ name: '', phone: '', address: '' }); setShowAddModal(true); }} style={{ background: 'var(--secondary)', borderColor: 'var(--secondary)' }}>
-                        <Plus size={18} /> Add Party
+                    <button className="btn-primary" onClick={() => { setFormData({ name: '' }); setShowAddModal(true); }} style={{ background: 'var(--secondary)', borderColor: 'var(--secondary)' }}>
+                        <Plus size={18} /> Add Party Name
                     </button>
                 </div>
             </header>
@@ -84,13 +84,13 @@ const Dashboard = () => {
                     <div className="stat-card" style={{ flex: 1, background: '#fff', padding: '20px', borderRadius: '12px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--secondary)' }}>
                             <Users size={24} />
-                            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total Parties</span>
+                            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Registered Parties</span>
                         </div>
                         <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '10px' }}>{parties.length}</div>
                     </div>
                 </div>
 
-                <h2 style={{ fontSize: '1.2rem', marginBottom: '1.2rem', color: 'var(--text-main)' }}>Registered Parties</h2>
+                <h2 style={{ fontSize: '1.2rem', marginBottom: '1.2rem', color: 'var(--text-main)' }}>Click on Party Name to see their Stock</h2>
                 
                 {loading ? (
                     <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -105,53 +105,51 @@ const Dashboard = () => {
                                 className="party-card" 
                                 style={{ 
                                     background: '#fff', 
-                                    padding: '20px', 
+                                    padding: '24px', 
                                     borderRadius: '12px', 
                                     boxShadow: 'var(--shadow-sm)', 
                                     border: '1px solid var(--border)',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease',
                                     display: 'flex',
-                                    flexDirection: 'column',
+                                    flexDirection: 'row',
                                     justifyContent: 'space-between',
+                                    alignItems: 'center',
                                     position: 'relative'
                                 }}
                                 onClick={() => navigate('/inventory', { state: { selectedParty: party.name } })}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                             >
-                                <div>
-                                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--primary)', marginBottom: '8px' }}>{party.name}</h3>
-                                    {party.phone && <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>📞 {party.phone}</p>}
-                                    {party.address && <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px' }}>📍 {party.address}</p>}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                    <div style={{ background: '#f1f5f9', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                                        <Users size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-main)' }}>{party.name}</h3>
+                                        <span style={{ color: 'var(--secondary)', fontSize: '0.8rem', fontWeight: 600 }}>See Current Stock <ArrowRight size={12} /></span>
+                                    </div>
                                 </div>
-                                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ color: 'var(--secondary)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        View Stock <ArrowRight size={14} />
-                                    </span>
-                                    <button 
-                                        className="btn-danger" 
-                                        style={{ 
-                                            background: '#fef2f2', 
-                                            color: '#ef4444', 
-                                            padding: '8px', 
-                                            borderRadius: '8px', 
-                                            border: '1px solid #fee2e2' 
-                                        }}
-                                        onClick={(e) => handleDeleteParty(party._id, e)}
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
+                                <button 
+                                    className="btn-danger" 
+                                    style={{ 
+                                        background: '#fef2f2', 
+                                        color: '#ef4444', 
+                                        padding: '8px', 
+                                        borderRadius: '8px', 
+                                        border: '1px solid #fee2e2' 
+                                    }}
+                                    onClick={(e) => handleDeleteParty(party._id, e)}
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <div style={{ textAlign: 'center', padding: '60px', background: '#f8fafc', borderRadius: '12px', border: '2px dashed var(--border)' }}>
                         <Users size={48} style={{ color: 'var(--border)', marginBottom: '16px' }} />
-                        <h3 style={{ color: 'var(--text-main)', marginBottom: '8px' }}>No Parties Added Yet</h3>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>Start by adding a vendor or a client to manage their stock transactions.</p>
-                        <button className="btn-primary" onClick={() => setShowAddModal(true)}>Add First Party</button>
+                        <h3 style={{ color: 'var(--text-main)', marginBottom: '8px' }}>No Parties Found</h3>
+                        <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>Add a party name below to start managing their stock.</p>
+                        <button className="btn-primary" onClick={() => setShowAddModal(true)}>Add Party Now</button>
                     </div>
                 )}
             </div>
@@ -161,7 +159,7 @@ const Dashboard = () => {
                 <div className="modal-overlay">
                     <div className="modal">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                            <h2 style={{ fontSize: '1.25rem' }}>Add New Party</h2>
+                            <h2 style={{ fontSize: '1.25rem' }}>Enter Party Name</h2>
                             <button onClick={() => setShowAddModal(false)} style={{ background: 'transparent' }}><X size={20} /></button>
                         </div>
                         <form onSubmit={handleCreateParty}>
@@ -172,33 +170,14 @@ const Dashboard = () => {
                                     className="form-input" 
                                     required 
                                     value={formData.name}
-                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                    placeholder="e.g. Acme Corp"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Phone (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    className="form-input" 
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                    placeholder="e.g. +91 99999 99999"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Address (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    className="form-input" 
-                                    value={formData.address}
-                                    onChange={(e) => setFormData({...formData, address: e.target.value})}
-                                    placeholder="e.g. 123 Street Lane"
+                                    onChange={(e) => setFormData({ name: e.target.value })}
+                                    placeholder="Enter unique party name"
+                                    autoFocus
                                 />
                             </div>
                             <div className="modal-actions">
                                 <button type="button" className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary" style={{ flex: 2, background: 'var(--secondary)' }}>Save Party</button>
+                                <button type="submit" className="btn-primary" style={{ flex: 2, background: 'var(--secondary)' }}>Save Party Name</button>
                             </div>
                         </form>
                     </div>
