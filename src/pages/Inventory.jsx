@@ -26,7 +26,7 @@ const Inventory = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [location.key, initialParty]);
 
     const fetchProducts = async () => {
         try {
@@ -150,10 +150,10 @@ const Inventory = () => {
         <main className="main-content">
             <header className="top-bar">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <h1 className="page-title">Stock Management</h1>
+                    <h1 className="page-title">{initialParty ? `${initialParty}'s Stock Report` : 'Overall Stock Management'}</h1>
                     {initialParty && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--secondary)', fontSize: '0.9rem', fontWeight: 600 }}>
-                            <User size={16} /> Viewing for Party: {initialParty}
+                            <User size={16} /> Viewing specific inventory records for: {initialParty}
                         </div>
                     )}
                 </div>
